@@ -6,7 +6,7 @@ import json
 from movie import index
 
 index.index_dir()
-print(index.permuterm_index.dict())
+index.rating_dir()
 
 def add_seen(request, movie_id):
     if request.is_ajax():
@@ -107,11 +107,17 @@ def whole_list(request, model, page):
 
 def search(request, pattern):
     pattern = pattern.replace("%20", " ")
-    movies = Movie.objects.filter(title__contains=pattern)
-    actors = Actor.objects.filter(name__contains=pattern)
+    search_results = index.wildcard_search(pattern)
+    movies, actors = [], []
+    for movieid in search_results[0]:
+        movies.append(Movie.objects.get(movieid=movieid))
+    for actorid in search_results[1]:
+        actors.append(Actor.objects.get(actorid=actorid))
+    # movies = Movie.objects.filter(title__contains=pattern)
+    # actors = Actor.objects.filter(name__contains=pattern)
     return render(request, 'searchresult.html',
-                  {'items1': movies, 'search1': pattern, 'number1': len(movies), 'items2': actors, 'search2': pattern,
-                   'number2': len(actors)})
+                  {'items1': movies, 'search1': pattern, 'number1': len(movies) if len(movies) < 5 else 5, 'items2': actors,
+                   'search2': pattern, 'number2': len(actors) if len(actors) < 5 else 5})
 
 
 def search_suggest(request, str):
