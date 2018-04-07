@@ -122,23 +122,29 @@ def search(request, pattern):
 
 def search_suggest(request, str):
     movie_list, actor_list = [], []
+    res = index.wildcard_search(str)
+    movies, actors = [], []
+    for movieid in res[0]:
+        movies.append(Movie.objects.get(movieid=movieid))
+    for actorid in res[1]:
+        actors.append(Actor.objects.get(actorid=actorid))
+    # movies = Movie.objects.filter(title__istartswith=str).order_by('-rate')
     # movie
-    movies = Movie.objects.filter(title__istartswith=str).order_by('-rate')
     if len(movies) > 3:
         for i in range(3):
             movie_list.append({'movieid': movies[i].movieid, 'poster': movies[i].poster, 'title': movies[i].title})
     else:
-        movies = Movie.objects.filter(title__contains=str).order_by('-rate')
+        # movies = Movie.objects.filter(title__contains=str).order_by('-rate')
         num = 3 - len(movie_list) if len(movies) > 3 - len(movie_list) else len(movies)
         for i in range(num):
             movie_list.append({'movieid': movies[i].movieid, 'poster': movies[i].poster, 'title': movies[i].title})
     # actor
-    actors = Actor.objects.filter(name__istartswith=str)
+    # actors = Actor.objects.filter(name__istartswith=str)
     if len(actors) > 3:
         for i in range(3):
             actor_list.append({'actorid': actors[i].actorid, 'photo': actors[i].photo, 'name': actors[i].name})
     else:
-        actors = Actor.objects.filter(name__contains=str)
+        # actors = Actor.objects.filter(name__contains=str)
         num = 3 - len(actor_list) if len(actors) > 3 - len(actor_list) else len(actors)
         for i in range(num):
             actor_list.append({'actorid': actors[i].actorid, 'photo': actors[i].photo, 'name': actors[i].name})

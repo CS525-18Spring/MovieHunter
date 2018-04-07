@@ -39,6 +39,9 @@ def rating_dir():
     for movie in movie_objects:
         rating_dic[movie.movieid] = movie.rate
 
+def get_rating(id):
+    return rating_dic[id]
+
 def _rotate(term):
     x = term + "$"
     if "*" not in term:
@@ -72,6 +75,7 @@ def wildcard_search(text):
         movies.add(id) if id[:2] == "tt" else actors.add(id)
     for id in union_result:
         movies.add(id) if id[:2] == "tt" else actors.add(id)
+    movies = sorted(movies, key=get_rating, reverse=True)
     result.append(list(movies))
     result.append(list(actors))
     return result
