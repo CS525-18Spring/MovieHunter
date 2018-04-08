@@ -42,6 +42,10 @@ def rating_dir():
 def get_rating(id):
     return rating_dic[id]
 
+def get_act_num(id):
+    records = Act.objects.filter(actorid_id=id)
+    return len(records)
+
 def _rotate(term):
     x = term + "$"
     if "*" not in term:
@@ -52,8 +56,7 @@ def _rotate(term):
 
 def wildcard_search(text):
     result = []
-    intersection_result = set()
-    union_result = set()
+    intersection_result, union_result = set(), set()
     movie_objects = Movie.objects.all()
     for movie in movie_objects:
         intersection_result.add(movie.movieid)
@@ -62,22 +65,28 @@ def wildcard_search(text):
         intersection_result.add(actor.actorid)
     for token in tokenize(text):
         result_files = set()
-        # search_token = _rotate(token)
         search_token_1 = _rotate("*" + token)
         search_token_2 = _rotate(token + "*")
-        # result_files = result_files.union(crawl_tree(permuterm_index.root, search_token))
         result_files = result_files.union(crawl_tree(permuterm_index.root, search_token_1))
         result_files = result_files.union(crawl_tree(permuterm_index.root, search_token_2))
         intersection_result = intersection_result.intersection(result_files)
         union_result = union_result.union(result_files)
-    movies, actors = set(), set()
+
+    inter_movies, inter_actors = set(), set()
     for id in intersection_result:
-        movies.add(id) if id[:2] == "tt" else actors.add(id)
+        inter_movies.add(id) if id[:2] == "tt" else inter_actors.add(id)
+    inter_movies = sorted(inter_movies, key=get_rating, reverse=True)
+    inter_actors = sorted(inter_actors, key=get_act_num, reverse=True)
+
+    union_movies, union_actors = set(), set()
     for id in union_result:
-        movies.add(id) if id[:2] == "tt" else actors.add(id)
-    movies = sorted(movies, key=get_rating, reverse=True)
-    result.append(list(movies))
-    result.append(list(actors))
+        if id not in inter_movies and id not in inter_actors:
+            union_movies.add(id) if id[:2] == "tt" else union_actors.add(id)
+    union_movies = sorted(union_movies, key=get_rating, reverse=True)
+    union_actors = sorted(union_actors, key=get_act_num, reverse=True)
+
+    result.append(inter_movies + union_movies)
+    result.append(inter_actors + union_actors)
     return result
 
 
