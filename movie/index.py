@@ -53,6 +53,12 @@ def _rotate(term):
     n = x.index("*") + 1
     return (x[n:] + x[:n])
 
+def add_Wild_Card(term):
+    tokens = []
+    n = len(term)
+    for i in range(n + 1):
+        tokens.append(term[:i] + "*" + term[i:])
+    return tokens
 
 def wildcard_search(text):
     result = []
@@ -65,12 +71,12 @@ def wildcard_search(text):
         intersection_result.add(actor.actorid)
     for token in tokenize(text):
         result_files = set()
-        search_token_1 = _rotate("*" + token)
-        search_token_2 = _rotate(token + "*")
-        result_files = result_files.union(crawl_tree(permuterm_index.root, search_token_1))
-        result_files = result_files.union(crawl_tree(permuterm_index.root, search_token_2))
-        intersection_result = intersection_result.intersection(result_files)
-        union_result = union_result.union(result_files)
+        tokens = add_Wild_Card(token)
+        for t in tokens:
+            search_token = _rotate(t)
+            result_files = result_files.union(crawl_tree(permuterm_index.root, search_token))
+            intersection_result = intersection_result.intersection(result_files)
+            union_result = union_result.union(result_files)
 
     inter_movies, inter_actors = set(), set()
     for id in intersection_result:
