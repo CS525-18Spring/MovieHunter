@@ -64,44 +64,48 @@ def _rotate(term):
 def add_Wild_Card(term):
     tokens = []
     n = len(term)
-    for i in range(n + 1):
+    for i in range(1, n):
         tokens.append(term[:i] + "*" + term[i:])
     return tokens
 
 
-def wildcard_search(text):
+def wildcard_search(text, is_suggestion=False):
     result = []
-    intersection_result, union_result = set(), set()
+    intersection_movies, union_movies = set(), set()
+    intersection_actors, union_actors = set(), set()
+    suggest_movies, suggest_actors = set(), set()
     movie_objects = Movie.objects.all()
     for movie in movie_objects:
-        intersection_result.add(movie.movieid)
+        intersection_movies.add(movie.movieid)
     actor_objects = Actor.objects.all()
     for actor in actor_objects:
-        intersection_result.add(actor.actorid)
+        intersection_actors.add(actor.actorid)
     for token in tokenize(text):
-        result_files = set()
-        tokens = add_Wild_Card(token)
-        for t in tokens:
-            search_token = _rotate(t)
-            result_files = result_files.union(crawl_tree(permuterm_index.root, search_token))
-            intersection_result = intersection_result.intersection(result_files)
-            union_result = union_result.union(result_files)
+        result_movies, result_actors = set(), set()
+        search_token_1 = _rotate("*" + token)
+        search_token_2 = _rotate(token + "*")
+        for id in list(crawl_tree(permuterm_index.root, search_token_1)) + list(crawl_tree(permuterm_index.root, search_token_2)):
+            result_movies.add(id) if id[:2] == "tt" else result_actors.add(id)
+        if not is_suggestion:
+            tokens = add_Wild_Card(token)
+            for t in tokens:
+                search_token = _rotate(t)
+                for id in list(crawl_tree(permuterm_index.root, search_token)):
+                    suggest_movies.add(id) if id[:2] == "tt" else suggest_actors.add(id)
 
-    inter_movies, inter_actors = set(), set()
-    for id in intersection_result:
-        inter_movies.add(id) if id[:2] == "tt" else inter_actors.add(id)
-    inter_movies = sorted(inter_movies, key=get_rating, reverse=True)
-    inter_actors = sorted(inter_actors, key=get_act_num, reverse=True)
+        intersection_movies = intersection_movies.intersection(result_movies)
+        union_movies = union_movies.union(result_movies)
+        intersection_actors = intersection_actors.intersection(result_actors)
+        union_actors = union_actors.union(result_actors)
 
-    union_movies, union_actors = set(), set()
-    for id in union_result:
-        if id not in inter_movies and id not in inter_actors:
-            union_movies.add(id) if id[:2] == "tt" else union_actors.add(id)
-    union_movies = sorted(union_movies, key=get_rating, reverse=True)
-    union_actors = sorted(union_actors, key=get_act_num, reverse=True)
-
-    result.append(inter_movies + union_movies)
-    result.append(inter_actors + union_actors)
+    union_movies = union_movies - intersection_movies
+    union_actors = union_actors - intersection_actors
+    suggest_movies = suggest_movies - intersection_movies - union_movies
+    suggest_actors = suggest_actors - intersection_actors - union_actors
+    result.append(sorted(intersection_movies, key=get_rating, reverse=True) + sorted(union_movies, key=get_rating, reverse=True) +
+                  sorted(suggest_movies, key=get_rating, reverse=True))
+    result.append(sorted(intersection_actors, key=get_act_num, reverse=True) + sorted(union_actors, key=get_act_num, reverse=True) +
+                  sorted(suggest_actors, key=get_act_num, reverse=True))
     return result
 
 

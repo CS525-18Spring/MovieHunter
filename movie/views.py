@@ -117,14 +117,14 @@ def search(request, pattern):
     # movies = Movie.objects.filter(title__contains=pattern)
     # actors = Actor.objects.filter(name__contains=pattern)
     return render(request, 'searchresult.html',
-                  {'items1': movies, 'search1': pattern, 'number1': len(movies) if len(movies) < 5 else 5,
+                  {'items1': movies, 'search1': pattern, 'number1': len(movies),
                    'items2': actors,
-                   'search2': pattern, 'number2': len(actors) if len(actors) < 5 else 5})
+                   'search2': pattern, 'number2': len(actors)})
 
 
 def search_suggest(request, str):
     movie_list, actor_list = [], []
-    res = index.wildcard_search(str)
+    res = index.wildcard_search(str, is_suggestion=True)
     movies, actors = [], []
     for movieid in res[0]:
         movies.append(Movie.objects.get(movieid=movieid))
