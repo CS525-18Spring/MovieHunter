@@ -39,15 +39,17 @@ def index(request):
             seens = Seen.objects.filter(username=request.user.get_username())
             if len(seens) != 0:
                 find_recommendations(recommendations, seens, elements)
+                for seen in seens:
+                    recommendations.remove(seen.movieid.movieid)
             else:
                 expects = Expect.objects.filter(username=request.user.get_username())
                 if len(expects) != 0:
                     find_recommendations(recommendations, expects, elements)
+                    for expect in expects:
+                        recommendations.remove(expect.movieid.movieid)
 
             recommendation = []
-            print('num', len(recommendations))
             if len(recommendations) <= 5:
-                print('zysssss')
                 for movieid in recommendations:
                     try:
                         temp = {}
@@ -91,10 +93,10 @@ def find_recommendations(recommendations, seens_or_expects, elements):
         for element in elements:
             if element['movieid'] == seen.movieid.movieid:
                 cur_vector = element['vector']
+                break
         for element in elements:
             dist = euclidean_distances(cur_vector, element['vector'])
-            element['dist'] = dist
-        sorted(elements, key=lambda e: e['dist'])
+            element['dist'] = dist[0, 0]
+        elements = sorted(elements, key=lambda e: e['dist'])
         for i in range(0, 10):
             recommendations.add(elements[i]['movieid'])
-        print('test', recommendations)
