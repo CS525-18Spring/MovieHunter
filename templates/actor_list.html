@@ -72,7 +72,8 @@
         <div class="Layer" id="layer"></div>
 
         <p>Year: {{ object.year }}</p>
-        <p>Release Date: {{ object.date }}</p>
+        <p>Genres: {{ object.genres }}</p>
+        <p>Movie Length: {{ object.length }} min</p>
         <span class="stars">{{ object.rate }}</span>
         <p>Rating: {{ object.rate }}</p>
         <p><a href="http://www.imdb.com/title/{{ object.movieid }}" target="_blank">See in IMDB <span
@@ -94,7 +95,7 @@
             </div>
         </div>
 
-        <p id="summary">Plot Summary:"{{ object.plot }}"</p>
+        <p id="summary"><b>Plot Summary: </b>"{{ object.plot }}"</p>
         <h2>Main actors in {{ object.title }}:</h2>
         <hr>
 

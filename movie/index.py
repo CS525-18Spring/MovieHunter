@@ -1,15 +1,18 @@
 from movie.models import *
 from movie import binarytree
 
+
 def _permute(term):
     x = term + "$"
     return [x[i:] + x[:i] for i in range(len(x))]
+
 
 def tokenize(text):
     import re
     clean_string = re.sub('[^a-z0-9 ]', ' ', text.lower())
     tokens = clean_string.split()
     return tokens
+
 
 def index_dir():
     global permuterm_index
@@ -32,6 +35,7 @@ def index_dir():
                     permuterm_index[a_permuted_term].add(actor.actorid)
     # return permuterm_index
 
+
 def rating_dir():
     global rating_dic
     rating_dic = {}
@@ -39,12 +43,15 @@ def rating_dir():
     for movie in movie_objects:
         rating_dic[movie.movieid] = movie.rate
 
+
 def get_rating(id):
     return rating_dic[id]
+
 
 def get_act_num(id):
     records = Act.objects.filter(actorid_id=id)
     return len(records)
+
 
 def _rotate(term):
     x = term + "$"
@@ -53,12 +60,14 @@ def _rotate(term):
     n = x.index("*") + 1
     return (x[n:] + x[:n])
 
+
 def add_Wild_Card(term):
     tokens = []
     n = len(term)
     for i in range(n + 1):
         tokens.append(term[:i] + "*" + term[i:])
     return tokens
+
 
 def wildcard_search(text):
     result = []

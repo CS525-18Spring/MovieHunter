@@ -8,6 +8,7 @@ from movie import index
 index.index_dir()
 index.rating_dir()
 
+
 def add_seen(request, movie_id):
     if request.is_ajax():
         history = Seen.objects.filter(movieid_id=movie_id, username=request.user.get_username())
@@ -84,10 +85,9 @@ def detail(request, model, id):
 
 
 def whole_list(request, model, page):
-    if page:
-        page = int(page)
-    else:
+    if page is None:
         return render(request, '404.html')
+    page = int(page)
     objects = model.objects.all()
     total_page = len(objects) // 10
     if (len(objects) / 10 - len(objects) // 10) > 0:
@@ -105,6 +105,7 @@ def whole_list(request, model, page):
         del data['next_page']
     return render(request, '{}_list.html'.format(model.get_name()), data)
 
+
 def search(request, pattern):
     pattern = pattern.replace("%20", " ")
     search_results = index.wildcard_search(pattern)
@@ -116,7 +117,8 @@ def search(request, pattern):
     # movies = Movie.objects.filter(title__contains=pattern)
     # actors = Actor.objects.filter(name__contains=pattern)
     return render(request, 'searchresult.html',
-                  {'items1': movies, 'search1': pattern, 'number1': len(movies) if len(movies) < 5 else 5, 'items2': actors,
+                  {'items1': movies, 'search1': pattern, 'number1': len(movies) if len(movies) < 5 else 5,
+                   'items2': actors,
                    'search2': pattern, 'number2': len(actors) if len(actors) < 5 else 5})
 
 
