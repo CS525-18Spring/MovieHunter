@@ -38,7 +38,13 @@
     {% endif %}
 
     {% for page in pages %}
-        <a href="/movie/movie_all/{{ page }}" target="_self">{{ page }}</a>
+        {% with large=current_page|add:10 %}
+            {% with small=page|add:10 %}
+                {% if small >= current_page and page < large %}
+                    <a href="/movie/movie_all/{{ page }}" target="_self">{{ page }}</a>
+                {% endif %}
+            {% endwith %}
+        {% endwith %}
     {% endfor %}
 
     {% if next_page %}

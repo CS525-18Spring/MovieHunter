@@ -104,8 +104,16 @@
 
 
     {% for item in items %}
-        <h3><a href="/movie/actor_detail/{{ item.actorid }}" target="_self">{{ item.name }}</a></h3>
-        <img border="0" src="{{ item.photo }}" alt="Cannot load photo, sorry!" width="200" height="280">
+        <table>
+        <td>
+             <img border="0" src="{{ item.photo }}" alt="Cannot load photo, sorry!" width="200" height="280" style="padding: 10px">
+        </td>
+        <td>
+            <h3><a href="/movie/actor_detail/{{ item.actorid }}" target="_self">{{ item.name }}</a></h3>
+        </td>
+        </table>
+
+
         <hr>
     {% endfor %}
 
@@ -116,7 +124,13 @@
         {% endif %}
 
         {% for page in pages %}
-            <a href="/movie/actor_all/{{ page }}" target="_self">{{ page }}</a>
+            {% with large=current_page|add:10 %}
+            {% with small=page|add:10 %}
+                {% if small >= current_page and page < large %}
+                    <a href="/movie/actor_all/{{ page }}" target="_self">{{ page }}</a>
+                {% endif %}
+            {% endwith %}
+            {% endwith %}
         {% endfor %}
 
         {% if next_page %}
