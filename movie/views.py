@@ -108,7 +108,7 @@ def whole_list(request, model, page):
 
 def search(request, pattern):
     pattern = pattern.replace("%20", " ")
-    search_results = index.wildcard_search(pattern)
+    search_results = index.wildcard_search(pattern, is_suggestion=False)
     movies, actors = [], []
     for movieid in search_results[0]:
         movies.append(Movie.objects.get(movieid=movieid))

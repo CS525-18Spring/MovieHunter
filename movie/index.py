@@ -69,7 +69,7 @@ def add_Wild_Card(term):
     return tokens
 
 
-def wildcard_search(text, is_suggestion=False):
+def wildcard_search(text, is_suggestion):
     result = []
     intersection_movies, union_movies = set(), set()
     intersection_actors, union_actors = set(), set()
