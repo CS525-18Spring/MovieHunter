@@ -18,54 +18,54 @@ def index(request):
         if request.user.is_authenticated:
             data = {'username': request.user.get_username()}
 
-            movies = Movie.objects.all()
-            elements = []
-            corpus = []
-            for movie in movies:
-                if movie.plot != None and movie.plot != '':
-                    elements.append({'movieid': movie.movieid})
-                    corpus.append(movie.plot)
-
-            vectorizer = CountVectorizer()
-            transformer = TfidfTransformer()
-            tfidf = transformer.fit_transform(
-                vectorizer.fit_transform(corpus).todense())
-            weight = tfidf.toarray()
-
-            for i in range(len(elements)):
-                elements[i]['vector'] = weight[i]
-
-            recommendations = set()
-            seens = Seen.objects.filter(username=request.user.get_username())
-            if len(seens) != 0:
-                find_recommendations(recommendations, seens, elements)
-            else:
-                expects = Expect.objects.filter(username=request.user.get_username())
-                if len(expects) != 0:
-                    find_recommendations(recommendations, expects, elements)
-
-            recommendation = []
-            print('num', len(recommendations))
-            if len(recommendations) <= 5:
-                print('zysssss')
-                for movieid in recommendations:
-                    try:
-                        temp = {}
-                        temp['movieid'] = movieid
-                        temp['poster'] = Movie.objects.get(movieid=movieid).poster
-                        recommendation.append(temp)
-                    except:
-                        continue
-            else:
-                for movieid in random.sample(recommendations, 5):
-                    try:
-                        temp = {}
-                        temp['movieid'] = movieid
-                        temp['poster'] = Movie.objects.get(movieid=movieid).poster
-                        recommendation.append(temp)
-                    except:
-                        continue
-            data['recommendations'] = recommendation
+            # movies = Movie.objects.all()
+            # elements = []
+            # corpus = []
+            # for movie in movies:
+            #     if movie.plot != None and movie.plot != '':
+            #         elements.append({'movieid': movie.movieid})
+            #         corpus.append(movie.plot)
+            #
+            # vectorizer = CountVectorizer()
+            # transformer = TfidfTransformer()
+            # tfidf = transformer.fit_transform(
+            #     vectorizer.fit_transform(corpus).todense())
+            # weight = tfidf.toarray()
+            #
+            # for i in range(len(elements)):
+            #     elements[i]['vector'] = weight[i]
+            #
+            # recommendations = set()
+            # seens = Seen.objects.filter(username=request.user.get_username())
+            # if len(seens) != 0:
+            #     find_recommendations(recommendations, seens, elements)
+            # else:
+            #     expects = Expect.objects.filter(username=request.user.get_username())
+            #     if len(expects) != 0:
+            #         find_recommendations(recommendations, expects, elements)
+            #
+            # recommendation = []
+            # print('num', len(recommendations))
+            # if len(recommendations) <= 5:
+            #     print('zysssss')
+            #     for movieid in recommendations:
+            #         try:
+            #             temp = {}
+            #             temp['movieid'] = movieid
+            #             temp['poster'] = Movie.objects.get(movieid=movieid).poster
+            #             recommendation.append(temp)
+            #         except:
+            #             continue
+            # else:
+            #     for movieid in random.sample(recommendations, 5):
+            #         try:
+            #             temp = {}
+            #             temp['movieid'] = movieid
+            #             temp['poster'] = Movie.objects.get(movieid=movieid).poster
+            #             recommendation.append(temp)
+            #         except:
+            #             continue
+            # data['recommendations'] = recommendation
 
         popular_movies = Popularity.objects.all().order_by('-weight')
         popular = []
