@@ -18,37 +18,21 @@ def index(request):
         if request.user.is_authenticated:
             data = {'username': request.user.get_username()}
 
-            movies = Movie.objects.all()
-            elements = []
-            corpus = []
-            for movie in movies:
-                if movie.plot != None and movie.plot != '':
-                    elements.append({'movieid': movie.movieid})
-                    corpus.append(movie.plot)
-
-            vectorizer = CountVectorizer()
-            transformer = TfidfTransformer()
-            tfidf = transformer.fit_transform(
-                vectorizer.fit_transform(corpus).todense())
-            weight = tfidf.toarray()
-
-            for i in range(len(elements)):
-                elements[i]['vector'] = weight[i].reshape(1, -1)
-
             recommendations = set()
             seens = Seen.objects.filter(username=request.user.get_username())
             if len(seens) != 0:
-                find_recommendations(recommendations, seens, elements)
+                find_recommendations(recommendations, seens)
                 for seen in seens:
                     recommendations.remove(seen.movieid.movieid)
             else:
                 expects = Expect.objects.filter(username=request.user.get_username())
                 if len(expects) != 0:
-                    find_recommendations(recommendations, expects, elements)
+                    find_recommendations(recommendations, expects)
                     for expect in expects:
                         recommendations.remove(expect.movieid.movieid)
 
             recommendation = []
+            # print('re', len(recommendations))
             if len(recommendations) <= 5:
                 for movieid in recommendations:
                     try:
@@ -84,19 +68,37 @@ def index(request):
         return render(request, 'base.html', data)
 
 
-def find_recommendations(recommendations, seens_or_expects, elements):
-    for seen in seens_or_expects:
-        plot = Movie.objects.get(movieid=seen.movieid.movieid).plot
-        if plot == None or plot == '':
+def find_recommendations(recommendations, seens_or_expects):
+    for seen_or_expect in seens_or_expects:
+        cur = Movie.objects.get(movieid=seen_or_expect.movieid.movieid)
+        if cur.plot == None or cur.plot == '':
             continue
+
+        movies = Movie.objects.filter(genres=cur.genres)
+        # print('num', len(movies))
+        elements = []
+        corpus = []
+        for movie in movies:
+            if movie.plot != None and movie.plot != '':
+                elements.append({'movieid': movie.movieid})
+                corpus.append(movie.plot)
+
+        vectorizer = CountVectorizer()
+        transformer = TfidfTransformer()
+        tfidf = transformer.fit_transform(
+            vectorizer.fit_transform(corpus).todense())
+        weight = tfidf.toarray()
+
         cur_vector = []
-        for element in elements:
-            if element['movieid'] == seen.movieid.movieid:
-                cur_vector = element['vector']
-                break
+        for i in range(len(elements)):
+            elements[i]['vector'] = weight[i].reshape(1, -1)
+            if elements[i]['movieid'] == seen_or_expect.movieid.movieid:
+                cur_vector = elements[i]['vector']
+
         for element in elements:
             dist = euclidean_distances(cur_vector, element['vector'])
             element['dist'] = dist[0, 0]
         elements = sorted(elements, key=lambda e: e['dist'])
-        for i in range(0, 10):
+
+        for i in range(0, min(10, len(elements))):
             recommendations.add(elements[i]['movieid'])
