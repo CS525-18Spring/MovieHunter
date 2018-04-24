@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block mainbody %}
+    <div class="Layer" id="layer"></div>
     <div id="container">
         {% if object %}
 
@@ -67,7 +68,7 @@
 
                 </script>
                 <!-- Layer -->
-                <div class="Layer" id="layer"></div>
+                {#                <div class="Layer" id="layer"></div>#}
 
                 <p><b>Year:</b> {{ object.year }}</p>
                 <p><b>Genres:</b> {{ object.genres }}</p>
