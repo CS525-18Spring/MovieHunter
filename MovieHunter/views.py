@@ -19,21 +19,28 @@ def index(request):
             data = {'username': request.user.get_username()}
 
             recommendations = set()
+            seens_and_expects = set()
             seens = Seen.objects.filter(username=request.user.get_username())
             if len(seens) != 0:
                 find_recommendations(recommendations, seens)
                 for seen in seens:
+                    seens_and_expects.add(seen.movieid.movieid)
                     recommendations.remove(seen.movieid.movieid)
             else:
                 expects = Expect.objects.filter(username=request.user.get_username())
                 if len(expects) != 0:
                     find_recommendations(recommendations, expects)
                     for expect in expects:
+                        seens_and_expects.add(expect.movieid.movieid)
                         recommendations.remove(expect.movieid.movieid)
 
             recommendation = []
             # print('re', len(recommendations))
-            if len(recommendations) <= 5:
+            if len(recommendations) < 5:
+                high_rates = Movie.objects.exclude(movieid__in=seens_and_expects).order_by('-rate')[:50]
+                supplies = random.sample(list(high_rates), 5 - len(recommendations))
+                for supply in supplies:
+                    recommendations.add(supply.movieid)
                 for movieid in recommendations:
                     try:
                         temp = {}
