@@ -236,13 +236,11 @@
             </a>
         {% endfor %}
     </div>
-{#    <div id="particles-js">#}
-{#    </div>#}
+    {#    <div id="particles-js">#}
+    {#    </div>#}
     <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}"/>
-{% endblock %}
 
-{% if user.is_authenticated %}
-    {% block secondbody %}
+    {% if user.is_authenticated %}
         {% load static %}
         <div style=" margin-left: 1%;">
             <p style="color: white"><b>Recommendations For You:</b></p>
@@ -252,11 +250,12 @@
                 </a>
             {% endfor %}
         </div>
-{#        <div id="particles-js">#}
-{#        </div>#}
-{#        <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}"/>#}
-    {% endblock %}
-{% endif %}
+        {#        <div id="particles-js">#}
+        {#        </div>#}
+        {#        <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}"/>#}
+    {% endif %}
+{% endblock %}
+
 
 </body>
 </html>
