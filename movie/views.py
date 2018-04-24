@@ -108,14 +108,12 @@ def whole_list(request, model, page):
 
 def search(request, pattern):
     pattern = pattern.replace("%20", " ")
-    search_results = index.wildcard_search(pattern, is_suggestion=False)
+    search_results = index.wildcard_search(pattern)
     movies, actors = [], []
     for movieid in search_results[0]:
         movies.append(Movie.objects.get(movieid=movieid))
     for actorid in search_results[1]:
         actors.append(Actor.objects.get(actorid=actorid))
-    # movies = Movie.objects.filter(title__contains=pattern)
-    # actors = Actor.objects.filter(name__contains=pattern)
     return render(request, 'searchresult.html',
                   {'items1': movies, 'search1': pattern, 'number1': len(movies),
                    'items2': actors,
@@ -124,13 +122,12 @@ def search(request, pattern):
 
 def search_suggest(request, str):
     movie_list, actor_list = [], []
-    res = index.wildcard_search(str, is_suggestion=True)
+    res = index.search_suggest(str)
     movies, actors = [], []
     for movieid in res[0]:
         movies.append(Movie.objects.get(movieid=movieid))
     for actorid in res[1]:
         actors.append(Actor.objects.get(actorid=actorid))
-    # movies = Movie.objects.filter(title__istartswith=str).order_by('-rate')
     # movie
     if len(movies) > 3:
         for i in range(3):
@@ -141,7 +138,6 @@ def search_suggest(request, str):
         for i in range(num):
             movie_list.append({'movieid': movies[i].movieid, 'poster': movies[i].poster, 'title': movies[i].title})
     # actor
-    # actors = Actor.objects.filter(name__istartswith=str)
     if len(actors) > 3:
         for i in range(3):
             actor_list.append({'actorid': actors[i].actorid, 'photo': actors[i].photo, 'name': actors[i].name})
