@@ -11,6 +11,6 @@ To make it easy to deploy, SQLite is used as database. The database file is "mov
 3. Install Sklearn
 4. In the teminal, input command: python manage.py runserver 8080
 5. Open your web browser, input "localhost:8080"
-6. P.S. If you fail running "python manage.py runserver 8080", try some other port numbers, like 8000.<br>
+6. P.S. If you fail running "python manage.py runserver 8080", try some other port numbers, like 8000.
 
-However, we highly recommend you to visit our website directly with zijun-xu.com:8080. We deployed our server on Digital Ocean.
+However, we highly recommend you to visit our website directly with https://zijun-xu.com:8080. We deployed our server on Digital Ocean.
