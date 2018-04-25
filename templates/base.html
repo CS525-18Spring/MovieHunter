@@ -40,7 +40,8 @@
             <form class="navbar-form navbar-left" action="/" method="post">
                 {% csrf_token %}
 
-                <input type="text" name="title" class="form-control" placeholder="Search Movies or Actors"
+                <input type="text" name="title" id="search-input" class="form-control"
+                       placeholder="Search Movies or Actors"
                        onkeyup="showResult(this.value)" size="55" autocomplete="off"/>
                 <input type="submit" class="btn btn-default" name="Search" value="Submit"/>
 
@@ -193,15 +194,16 @@
             $(".searchlistdiv").hide();
         }, 150);
     });
-
     function showResult(str) {
-        if (str.length == 0) {
+        if (str.length === 0) {
             $(".searchlistdiv").hide();
             return;
         }
         var path = "/movie/search_suggest/" + str;
         $.get(path, function (data) {
             data = JSON.parse(data);
+            if (document.getElementById('search-input').value !== data.text)
+                return;
             $(".search-movie").siblings().not(".search-actor").remove();
             for (var i = data.movie.length - 1; i >= 0; i--) {
                 var img = "<img src='" + data.movie[i].poster + "' width='60' height='75'></img>";
@@ -209,16 +211,16 @@
                     + data.movie[i].movieid + "'\">" + img + "<b>" + data.movie[i].title + "</b></div>";
                 $(".search-movie").after(link)
             }
-            if (data.movie.length == 0)
+            if (data.movie.length === 0)
                 $(".search-movie").after("<div class='no_suggest'><b>No suggestion!</b></div>")
 
-            for (var i = 0; i < data.actor.length; i++) {
+            for (var i = data.actor.length - 1; i >= 0; i--) {
                 var img = "<img src='" + data.actor[i].photo + "' width='60' height='75'></img>";
                 var link = "<div class='suggest' onclick=\"location.href='/movie/actor_detail/"
                     + data.actor[i].actorid + "'\">" + img + "<b>" + data.actor[i].name + "</b></div>";
                 $(".search-actor").after(link)
             }
-            if (data.actor.length == 0)
+            if (data.actor.length === 0)
                 $(".search-actor").after("<div class='no_suggest'><b>No suggestion!</b></div>")
 
             $(".searchlistdiv").show();
