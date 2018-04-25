@@ -42,7 +42,7 @@
 
                 <input type="text" name="title" id="search-input" class="form-control"
                        placeholder="Search Movies or Actors"
-                       onkeyup="showResult(this.value)" size="55" autocomplete="off"/>
+                       onkeyup="start_timer()" size="55" autocomplete="off"/>
                 <input type="submit" class="btn btn-default" name="Search" value="Submit"/>
 
                 <div class="searchlistdiv"
@@ -194,6 +194,18 @@
             $(".searchlistdiv").hide();
         }, 150);
     });
+    var last_input_time = Date.now();
+
+    function start_timer() {
+        var this_input_time = Date.now();
+        last_input_time = this_input_time;
+        setTimeout(
+            function (this_input_time) {
+                if (last_input_time === this_input_time)
+                    showResult(document.getElementById('search-input').value);
+            }, 200, this_input_time);
+    }
+
     function showResult(str) {
         if (str.length === 0) {
             $(".searchlistdiv").hide();
