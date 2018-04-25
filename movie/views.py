@@ -9,8 +9,8 @@ index.all_object_dict()
 index.index_dir()
 index.rating_dir()
 
+cache = {}
 
-# LRU_cache = {}
 
 def add_seen(request, movie_id):
     if request.is_ajax():
@@ -124,9 +124,9 @@ def search(request, pattern):
 
 
 def search_suggest(request, str):
-    # global LRU_cache
-    # if str in LRU_cache:
-    #     return HttpResponse(json.dumps(LRU_cache.get(str), ensure_ascii=False))
+    global cache
+    if str in cache:
+        return HttpResponse(json.dumps(cache.get(str), ensure_ascii=False))
     movie_list, actor_list = [], []
     res = index.search_suggest(str)
     movies, actors = [], []
@@ -154,7 +154,9 @@ def search_suggest(request, str):
             actor_list.append({'actorid': actors[i].actorid, 'photo': actors[i].photo, 'name': actors[i].name})
     # result in a dictionary
     result = {'movie': movie_list, 'actor': actor_list, 'text': str}
-    # LRU_cache[str] = result
+    if len(cache) > 1000:
+        cache = {}
+    cache[str] = result
     return HttpResponse(json.dumps(result, ensure_ascii=False))
 
 
