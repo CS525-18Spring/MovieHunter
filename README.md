@@ -55,6 +55,7 @@ Return the results that contain all the tokens in the query first.
 
 - **Item-based** : Do the item-based recommendation based on users’ seens and expects
 - **Content-based** : Do the content-based recommendation based on movies’ plots(tf-idf and euclidean distance)
+![image][img/recommender.jpg]
 
 
 <a name="deployment-instructions"></a>
