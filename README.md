@@ -22,7 +22,7 @@ We deployed the website on a Digital Ocean server at http://zijun-xu.com:8080 .
 <a name="hello-world"></a>
 
 ## Data and Database 
-We downloaded a raw movie dataset which contains 5000+ movies and features from IMDB. With movieid, we utilized python lib to collect the features we want from IMDB. Finally, we inserted about 3000 movies into database.
+We downloaded a raw [movie dataset](https://www.kaggle.com/oxanozaep/imdb-eda/data) which contains 5000+ movies and features from IMDB. With movieid, we utilized python lib to collect the features we want from IMDB. Finally, we inserted about 3000 movies into database.
 
 To make it easy to deploy, SQLite is used as database. The database file is "movie.db" in the root directory.
 
