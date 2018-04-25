@@ -1,17 +1,23 @@
 # MovieHunter
-This is a movie website using **Django** as backend framework and SQlite as database. Features like search engine, user management, login via Facebook and recommender are implemented.
+This is a movie website using **Django** as backend framework and SQlite as database. 
+
+For the current version, the following features are implemented, 
+- Search Engine
+- User Management
+- Login via Facebook (OAuth with Facebook API)
+- Recommender
+- Cache
 
 We deployed the website on a Digital Ocean server at http://zijun-xu.com:8080 .
 
 ***
 
-## Index of Content
+## Index of Contents
 1. [Data and Database](#data-and-database)
 2. [Search Engine](#search-engine)
 3. [Recommender](#recommender)
 4. [Deployment Instructions](#deployment-instructions)
 
-***
 
 <a name="hello-world"></a>
 
@@ -20,7 +26,6 @@ We downloaded a raw movie dataset which contains 5000+ movies and features from 
 
 To make it easy to deploy, SQLite is used as database. The database file is "movie.db" in the root directory.
 
-***
 
 <a name="search-engine"></a>
 
@@ -43,7 +48,7 @@ Sort:
 
 Return the results that contain all the tokens in the query first.
 
-***
+
 <a name="recommender"></a>
 
 ## Recommender
@@ -51,8 +56,6 @@ Return the results that contain all the tokens in the query first.
 - **Item-based** : Do the item-based recommendation based on users’ seens and expects
 - **Content-based** : Do the content-based recommendation based on movies’ plots(tf-idf and euclidean distance)
 
-
-***
 
 <a name="deployment-instructions"></a>
 
