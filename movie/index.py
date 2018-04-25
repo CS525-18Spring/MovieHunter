@@ -1,9 +1,11 @@
 from movie.models import *
 from movie import binarytree
 
+object_dict = {}
+
+
 def all_object_dict():
     global object_dict
-    object_dict = {}
     object_dict['movie_dict'] = {}
     object_dict['actor_dict'] = {}
     object_dict['movie_list'] = []
@@ -16,6 +18,7 @@ def all_object_dict():
     for actor in actor_objects:
         object_dict['actor_dict'][actor.actorid] = actor
         object_dict['actor_list'].append(actor)
+
 
 def _permute(term):
     x = term + "$"
@@ -99,7 +102,8 @@ def wildcard_search(text):
         result_movies, result_actors = set(), set()
         search_token_1 = _rotate("*" + token)
         search_token_2 = _rotate(token + "*")
-        for id in list(crawl_tree(permuterm_index.root, search_token_1)) + list(crawl_tree(permuterm_index.root, search_token_2)):
+        for id in list(crawl_tree(permuterm_index.root, search_token_1)) + list(
+                crawl_tree(permuterm_index.root, search_token_2)):
             result_movies.add(id) if id[:2] == "tt" else result_actors.add(id)
         tokens = add_Wild_Card(token)
         for t in tokens:
@@ -116,9 +120,11 @@ def wildcard_search(text):
     union_actors = union_actors - intersection_actors
     suggest_movies = suggest_movies - intersection_movies - union_movies
     suggest_actors = suggest_actors - intersection_actors - union_actors
-    result.append(sorted(intersection_movies, key=get_rating, reverse=True) + sorted(union_movies, key=get_rating, reverse=True) +
-                  sorted(suggest_movies, key=get_rating, reverse=True))
-    result.append(sorted(intersection_actors, key=get_act_num, reverse=True) + sorted(union_actors, key=get_act_num, reverse=True) +
+    result.append(
+        sorted(intersection_movies, key=get_rating, reverse=True) + sorted(union_movies, key=get_rating, reverse=True) +
+        sorted(suggest_movies, key=get_rating, reverse=True))
+    result.append(sorted(intersection_actors, key=get_act_num, reverse=True) + sorted(union_actors, key=get_act_num,
+                                                                                      reverse=True) +
                   sorted(suggest_actors, key=get_act_num, reverse=True))
     return result
 
@@ -126,7 +132,7 @@ def wildcard_search(text):
 def search_suggest(text):
     result = []
     intersection_movies = set()
-    intersection_actors= set()
+    intersection_actors = set()
     movie_objects = Movie.objects.all()
     for movie in movie_objects:
         intersection_movies.add(movie.movieid)
@@ -137,7 +143,8 @@ def search_suggest(text):
         result_movies, result_actors = set(), set()
         search_token_1 = _rotate("*" + token)
         search_token_2 = _rotate(token + "*")
-        for id in list(crawl_tree(permuterm_index.root, search_token_1)) + list(crawl_tree(permuterm_index.root, search_token_2)):
+        for id in list(crawl_tree(permuterm_index.root, search_token_1)) + list(
+                crawl_tree(permuterm_index.root, search_token_2)):
             result_movies.add(id) if id[:2] == "tt" else result_actors.add(id)
 
         intersection_movies = intersection_movies.intersection(result_movies)
