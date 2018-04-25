@@ -44,7 +44,7 @@ Return the results that contain all the tokens or contain at least one token of 
 Sort: 
 - Result movies are sorted by ratings.                                             
 - Result actors are sorted by number of movies they act.    
-- Search “*token” and “token*” first. 
+- Search “*token” and “token*” first.
 
 Return the results that contain all the tokens in the query first.
 
@@ -55,7 +55,7 @@ Return the results that contain all the tokens in the query first.
 
 - **Item-based** : Do the item-based recommendation based on users’ seens and expects
 - **Content-based** : Do the content-based recommendation based on movies’ plots(tf-idf and euclidean distance)
-![image][../img/recommender.jpg]
+![image](/img/recommender.jpg)
 
 
 <a name="deployment-instructions"></a>
