@@ -8,7 +8,7 @@ For the current version, the following features are implemented,
 - Recommender
 - Cache
 
-We deployed the website on a Digital Ocean server at http://zijun-xu.com:8080 .
+We deployed the website on a Digital Ocean server at [http://zijun-xu.com](http://zijun-xu.com).
 
 ***
 
